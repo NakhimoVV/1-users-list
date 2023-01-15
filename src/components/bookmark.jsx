@@ -1,5 +1,9 @@
 const BookMark = ({ status, ...rest }) => {
-    console.log(status, rest)
-    return <i className="bi bi-bookmark"></i>
+    return (
+        <button
+            className={!status ? 'bi bi-bookmark' : 'bi bi-bookmark-star-fill'}
+            onClick={rest.onClickBtn}
+        ></button>
+    )
 }
 export default BookMark

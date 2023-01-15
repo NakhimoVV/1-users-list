@@ -16,14 +16,10 @@ const User = (props) => {
             <td>{completedMeetings}</td>
             <td>{rate} /5</td>
             <td>
-                <button
-                    className={
-                        !bookmark
-                            ? 'bi bi-bookmark'
-                            : 'bi bi-bookmark-star-fill'
-                    }
-                    onClick={() => props.onToggle(props._id)}
-                ></button>
+                <BookMark
+                    status={bookmark}
+                    onClickBtn={() => props.onToggle(props._id)}
+                />
             </td>
             <td>
                 <button

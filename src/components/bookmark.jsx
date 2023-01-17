@@ -1,9 +1,8 @@
 const BookMark = ({ status, ...rest }) => {
     return (
-        <button
-            className={!status ? 'bi bi-bookmark' : 'bi bi-bookmark-star-fill'}
-            onClick={rest.onClickBtn}
-        ></button>
+        <button {...rest}>
+            <i className={'bi bi-bookmark' + (status ? '-star-fill' : '')}></i>
+        </button>
     )
 }
 export default BookMark

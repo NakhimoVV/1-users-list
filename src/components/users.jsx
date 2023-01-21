@@ -1,19 +1,51 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { paginate } from '../utils/paginate'
 import Pagination from './pagination'
 import User from './user'
 import PropTypes from 'prop-types'
+import api from '../api'
+import GroupList from './groupList'
 
 const Users = ({ users, ...rest }) => {
+    const [currentPage, setCurrentPage] = useState(1) //по умолчанию будет всегда отображаться 1 страница
+    const [professions, setProfessions] = useState()
+    const [selectedProf, setSelectedProf] = useState()
     const count = users.length
     const pageSize = 4 //по 4 user на каждой странице
-    const [currentPage, setCurrentPage] = useState(1) //по умолчанию будет всегда отображаться 1 страница
+    useEffect(() => {
+        api.professions.fetchAll().then((data) => setProfessions(data))
+    }, [])
+    const handleProfessionSelect = (item) => {
+        setSelectedProf(item)
+    }
     const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex)
     }
-    const userCrop = paginate(users, currentPage, pageSize)
+    const filteredUsers = selectedProf
+        ? users.filter((user) => user.profession === selectedProf)
+        : users
+    const userCrop = paginate(filteredUsers, currentPage, pageSize)
+
+    const clearFilter = () => {
+        setSelectedProf()
+    }
     return (
         <>
+            {professions && (
+                <>
+                    <GroupList
+                        selectedItem={selectedProf}
+                        items={professions}
+                        onItemSelect={handleProfessionSelect}
+                    />
+                    <button
+                        className="btn btn-secondary mt-2"
+                        onClick={clearFilter}
+                    >
+                        Очистить фильтр
+                    </button>
+                </>
+            )}
             {count > 0 && (
                 <table className="table">
                     <thead>

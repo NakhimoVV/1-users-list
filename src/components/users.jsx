@@ -12,7 +12,7 @@ const Users = () => {
     const [currentPage, setCurrentPage] = useState(1) //по умолчанию будет всегда отображаться 1 страница
     const [professions, setProfessions] = useState()
     const [selectedProf, setSelectedProf] = useState()
-    const [sortBy, setSortBy] = useState({ iter: 'name', order: 'asc' })
+    const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' })
     const pageSize = 8 //по 4 user на каждой странице
 
     const [users, setUsers] = useState()

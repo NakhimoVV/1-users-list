@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import ArrowDown from './ui/arrowDown'
+import ArrowUp from './ui/arrowUp'
 
 const TableHeader = ({ onSort, selectedSort, columns }) => {
     const handleSort = (item) => {
@@ -11,6 +13,14 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
         } else {
             onSort({ path: item, order: 'asc' })
         }
+    }
+    const checkOrder = () => {
+        if (selectedSort.order === 'asc') {
+            return <ArrowDown />
+        } else if (selectedSort.order === 'desc') {
+            return <ArrowUp />
+        }
+        return undefined
     }
     return (
         <thead>
@@ -27,6 +37,9 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
                         scope="col"
                     >
                         {columns[column].name}
+                        {columns[column].path === selectedSort.path
+                            ? checkOrder()
+                            : undefined}
                     </th>
                 ))}
             </tr>

@@ -26,8 +26,13 @@ const Users = ({ users, ...rest }) => {
         setCurrentPage(pageIndex)
     }
     const filteredUsers = selectedProf
-        ? users.filter((user) => user.profession._id === selectedProf._id)
+        ? users.filter(
+              (user) =>
+                  JSON.stringify(user.profession) ===
+                  JSON.stringify(selectedProf)
+          )
         : users
+
     const count = filteredUsers.length
     const userCrop = paginate(filteredUsers, currentPage, pageSize)
     const clearFilter = () => {

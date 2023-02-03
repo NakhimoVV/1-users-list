@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
 import { paginate } from '../utils/paginate'
 import Pagination from './pagination'
 import api from '../api'
@@ -8,7 +7,7 @@ import SearchStatus from './searchStatus'
 import UserTable from './usersTable'
 import _ from 'lodash'
 
-const Users = () => {
+const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1) //по умолчанию будет всегда отображаться 1 страница
     const [professions, setProfessions] = useState()
     const [selectedProf, setSelectedProf] = useState()
@@ -40,6 +39,7 @@ const Users = () => {
         //исправление ошибки пагинации
         setCurrentPage(1)
     }, [selectedProf])
+
     const handleProfessionSelect = (item) => {
         setSelectedProf(item)
     }
@@ -111,7 +111,5 @@ const Users = () => {
     }
     return 'Loading...'
 }
-Users.propTypes = {
-    users: PropTypes.array.isRequired
-}
-export default Users
+
+export default UsersList

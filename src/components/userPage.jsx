@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import api from '../api'
 import QualitiesList from './qualitiesList'
 
-const UserPage = ({ user }) => {
+const UserPage = ({ userId }) => {
     const history = useHistory()
+    const [user, setUser] = useState()
+    useEffect(() => {
+        api.users.getById(userId).then((data) => setUser(data))
+    })
     const goToList = () => {
         user ? history.push('/users') : history.replace('/users')
     }
@@ -20,12 +25,13 @@ const UserPage = ({ user }) => {
                 <button onClick={goToList}>Все Пользователи</button>
             </>
         )
+    } else {
+        return <h1>Loading</h1>
     }
-    return <h1>Loading</h1>
 }
 
 UserPage.propTypes = {
-    user: PropTypes.object
+    userId: PropTypes.string.isRequired
 }
 
 export default UserPage

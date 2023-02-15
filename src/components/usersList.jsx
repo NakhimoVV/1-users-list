@@ -6,6 +6,7 @@ import GroupList from './groupList'
 import SearchStatus from './searchStatus'
 import UserTable from './usersTable'
 import _ from 'lodash'
+import SearchForm from './SearchForm'
 
 const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1) //по умолчанию будет всегда отображаться 1 страница
@@ -18,6 +19,7 @@ const UsersList = () => {
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(data))
     }, [])
+
     const handleDelete = (userId) => {
         setUsers(users.filter((user) => user._id !== userId))
     }
@@ -50,6 +52,11 @@ const UsersList = () => {
         setSortBy(itemObj)
     }
 
+    const [dataSearch, setDataSearch] = useState('')
+    const handleChangeSearch = ({ target }) => {
+        setDataSearch(target.value)
+    }
+
     if (users) {
         const filteredUsers = selectedProf
             ? users.filter(
@@ -65,10 +72,16 @@ const UsersList = () => {
             [sortBy.path],
             [sortBy.order]
         )
-        const userCrop = paginate(sortedUsers, currentPage, pageSize)
         const clearFilter = () => {
             setSelectedProf()
         }
+
+        const userCrop = !dataSearch
+            ? paginate(sortedUsers, currentPage, pageSize)
+            : users.filter((user) =>
+                  user.name.toLowerCase().match(dataSearch.toLowerCase())
+              )
+
         return (
             <div className="d-flex">
                 {professions && (
@@ -88,6 +101,10 @@ const UsersList = () => {
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
+                    <SearchForm
+                        value={dataSearch}
+                        onChange={handleChangeSearch}
+                    />
                     {count > 0 && (
                         <UserTable
                             users={userCrop}

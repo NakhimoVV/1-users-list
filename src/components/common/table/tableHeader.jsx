@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ArrowDown from './ui/arrowDown'
-import ArrowUp from './ui/arrowUp'
+import ArrowDown from '../../ui/icons/arrowDown'
+import ArrowUp from '../../ui/icons/arrowUp'
 
 const TableHeader = ({ onSort, selectedSort, columns }) => {
     const handleSort = (item) => {

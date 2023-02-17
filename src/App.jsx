@@ -1,9 +1,9 @@
 import React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import NavBar from './components/navbar'
-import Users from './components/layouts/users'
-import MainPage from './components/layouts/main'
-import Login from './components/layouts/login'
+import NavBar from './components/ui/navbar'
+import Users from './layouts/users'
+import MainPage from './layouts/main'
+import Login from './layouts/login'
 
 function App() {
     return (

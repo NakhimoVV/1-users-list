@@ -16,6 +16,7 @@ module.exports = {
             'error',
             { anonymous: 'always', named: 'never' }
         ],
-        'spaced-comment': 'off'
+        'spaced-comment': ['off'],
+        'multiline-ternary': ['off']
     }
 }

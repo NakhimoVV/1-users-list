@@ -10,8 +10,8 @@ const UserPage = ({ userId }) => {
     useEffect(() => {
         api.users.getById(userId).then((data) => setUser(data))
     }, [])
-    const goToList = () => {
-        user ? history.push('/users') : history.replace('/users')
+    const handleClick = () => {
+        history.push(`/users/${userId}/edit`)
     }
 
     if (user) {
@@ -22,7 +22,7 @@ const UserPage = ({ userId }) => {
                 <Qualities qualities={user.qualities} />
                 <div>completedMeetings: {user.completedMeetings}</div>
                 <h2>Rate: {user.rate}</h2>
-                <button onClick={goToList}>Все Пользователи</button>
+                <button onClick={handleClick}>Изменить</button>
             </>
         )
     } else {

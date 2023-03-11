@@ -6,7 +6,7 @@ import GroupList from '../../common/groupList'
 import SearchStatus from '../../ui/searchStatus'
 import UserTable from '../../ui/usersTable'
 import _ from 'lodash'
-import SearchForm from './SearchForm'
+import SearchForm from '../../common/form/searchForm'
 
 const UsersListPage = () => {
     const [currentPage, setCurrentPage] = useState(1) //по умолчанию будет всегда отображаться 1 страница

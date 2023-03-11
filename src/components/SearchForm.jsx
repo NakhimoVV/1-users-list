@@ -4,7 +4,8 @@ import PropTypes from 'prop-types'
 const SearchForm = ({ value, onChange }) => {
     return (
         <input
-            name="search"
+            name="searchQuery"
+            type="text"
             value={value}
             onChange={onChange}
             placeholder="Search..."

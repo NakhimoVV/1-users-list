@@ -1,1 +1,5 @@
-{ "apiEndPoint": "http://127.0.0.1:4000/api/v1/" }
+{
+    "apiEndPoint": "http://127.0.0.1:4000/api/v1/",
+    "apiFirebasePoint": "https://fast-company-firebase-59666-default-rtdb.europe-west1.firebasedatabase.app/",
+    "isFirebase": true
+}

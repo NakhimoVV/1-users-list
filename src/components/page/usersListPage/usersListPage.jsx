@@ -7,8 +7,12 @@ import UserTable from '../../ui/usersTable'
 import _ from 'lodash'
 import SearchForm from '../../common/form/searchForm'
 import { useUser } from '../../../hooks/useUsers'
-import { useProfessions } from '../../../hooks/useProfession'
 import { useAuth } from '../../../hooks/useAuth'
+import {
+    getProfessions,
+    getProfessionsLoadingStatus
+} from '../../../store/professions'
+import { useSelector } from 'react-redux'
 
 const UsersListPage = () => {
     const [currentPage, setCurrentPage] = useState(1) //по умолчанию будет всегда отображаться 1 страница
@@ -18,8 +22,8 @@ const UsersListPage = () => {
     const pageSize = 8 //по 4 user на каждой странице
 
     const { users } = useUser()
-    console.log(users)
-    const { professions, isLoading: professionsLoading } = useProfessions()
+    const professions = useSelector(getProfessions())
+    const professionsLoading = useSelector(getProfessionsLoadingStatus())
     const { currentUser } = useAuth()
 
     const handleDelete = (userId) => {
@@ -27,22 +31,14 @@ const UsersListPage = () => {
         console.log(userId)
     }
     const handleToggleBookMark = (id) => {
-        // setUsers(
-        //     users.map((user) => {
-        //         if (user._id === id) {
-        //             return { ...user, bookmark: !user.bookmark }
-        //         }
-        //         return user
-        //     })
-        // )
-        console.log(
-            users.map((user) => {
-                if (user._id === id) {
-                    return { ...user, bookmark: !user.bookmark }
-                }
-                return user
-            })
-        )
+        const newArray = users.map((user) => {
+            if (user._id === id) {
+                return { ...user, bookmark: !user.bookmark }
+            }
+            return user
+        })
+        // setUsers(newArray);
+        console.log(newArray)
     }
 
     useEffect(() => {

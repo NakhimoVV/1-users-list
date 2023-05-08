@@ -39,9 +39,13 @@ const UserProvider = ({ children }) => {
         setError(message)
     }
 
+    function getUserById(userId) {
+        return users.find((u) => u._id === userId)
+    }
+
     return (
         //здесь делаем глобальную загрузку
-        <UserContext.Provider value={{ users }}>
+        <UserContext.Provider value={{ users, getUserById }}>
             {!isLoading ? children : 'Loading ...'}
         </UserContext.Provider>
     )

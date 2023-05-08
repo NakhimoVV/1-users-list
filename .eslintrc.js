@@ -17,6 +17,14 @@ module.exports = {
             { anonymous: 'always', named: 'never' }
         ],
         'spaced-comment': ['off'],
-        'multiline-ternary': ['off']
+        'multiline-ternary': ['off'],
+        quotes: [
+            'error',
+            'single',
+            {
+                allowTemplateLiterals: true,
+                avoidEscape: true
+            }
+        ]
     }
 }

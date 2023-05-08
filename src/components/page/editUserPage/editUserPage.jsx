@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { validator } from '../../../utils/validator'
-import api from '../../../api'
 import { useHistory, useParams } from 'react-router-dom'
 
 import MultiSelectField from '../../common/form/multiSelectField'
@@ -8,99 +7,79 @@ import RadioField from '../../common/form/radioField'
 import SelectField from '../../common/form/selectField'
 import TextField from '../../common/form/textField'
 import BackHistoryButton from '../../common/backButton'
+import { useProfessions } from '../../../hooks/useProfession'
+import { useQualities } from '../../../hooks/useQualities'
+import { useAuth } from '../../../hooks/useAuth'
 
 const EditUserPage = () => {
     const { userId } = useParams()
     const history = useHistory()
-    //необходим isLoading потомучто будем загружать данные, и
-    //необходимо чтобы форма отобразилась уже с загруженными данными
-    const [isLoading, setIsLoading] = useState(false)
+    const { currentUser, updateUser } = useAuth()
+    const { professions } = useProfessions()
+    const professionsList = professions.map((p) => ({
+        label: p.name,
+        value: p._id
+    }))
+    const { qualities, getQuality } = useQualities()
+    const qualitiesList = qualities.map((q) => ({
+        label: q.name,
+        value: q._id,
+        color: q.color
+    }))
+
     const [data, setData] = useState({
-        name: '',
-        email: '',
-        profession: '',
-        sex: 'male',
-        qualities: []
+        name: currentUser.name,
+        email: currentUser.email,
+        profession: currentUser.profession,
+        sex: currentUser.sex,
+        qualities: transformData(transformQualIds(currentUser.qualities))
     })
-    const [professions, setProfessions] = useState([])
-    const [qualities, setQualities] = useState([])
     const [errors, setErrors] = useState({})
 
     const getProfessionById = (id) => {
-        for (const prof of professions) {
+        for (const prof of professionsList) {
             if (prof.value === id) {
-                return { _id: prof.value, name: prof.label }
+                return prof.value
             }
         }
     }
     const getQualities = (elements) => {
         const qualitiesArray = []
         for (const elem of elements) {
-            for (const quality in qualities) {
-                if (elem.value === qualities[quality].value) {
-                    qualitiesArray.push({
-                        _id: qualities[quality].value,
-                        name: qualities[quality].label,
-                        color: qualities[quality].color
-                    })
+            for (const quality in qualitiesList) {
+                if (elem.value === qualitiesList[quality].value) {
+                    qualitiesArray.push(qualitiesList[quality].value)
                 }
             }
         }
         return qualitiesArray
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const isValid = validate()
         if (!isValid) return
         const { profession, qualities } = data
-        api.users
-            .update(userId, {
-                ...data,
-                profession: getProfessionById(profession),
-                qualities: getQualities(qualities)
-            })
-            .then((data) => history.push(`/users/${data._id}`))
-        console.log({
+        const newData = {
+            ...currentUser,
             ...data,
             profession: getProfessionById(profession),
             qualities: getQualities(qualities)
-        })
+        }
+        try {
+            await updateUser(newData)
+            history.push(`/users/${newData._id}`)
+        } catch (error) {
+            setErrors(error)
+        }
     }
-    const transformData = (data) => {
+    function transformData(data) {
         //каждое качество превращаем в пары label, value
-        return data.map((qual) => ({ label: qual.name, value: qual._id }))
+        return data.map((qual) => ({ label: qual?.name, value: qual?._id }))
     }
-    useEffect(() => {
-        setIsLoading(true)
-        api.users.getById(userId).then(({ profession, qualities, ...data }) =>
-            setData((prevState) => ({
-                ...prevState,
-                ...data,
-                qualities: transformData(qualities),
-                profession: profession._id
-            }))
-        )
-        api.professions.fetchAll().then((data) => {
-            const professionsList = Object.keys(data).map((professionName) => ({
-                label: data[professionName].name,
-                value: data[professionName]._id
-            }))
-            setProfessions(professionsList)
-        })
-        api.qualities.fetchAll().then((data) => {
-            const qualitiesList = Object.keys(data).map((optionName) => ({
-                value: data[optionName]._id,
-                label: data[optionName].name,
-                color: data[optionName].color
-            }))
-            setQualities(qualitiesList)
-        })
-    }, [])
-    useEffect(() => {
-        //обрабатываем случай когда данные уже обновились
-        if (data._id) setIsLoading(false)
-    }, [data])
+    function transformQualIds(qualIds) {
+        return qualIds.map((id) => getQuality(id))
+    }
 
     const validatorConfig = {
         name: {
@@ -133,15 +112,15 @@ const EditUserPage = () => {
     }
     const isValid = Object.keys(errors).length === 0
 
-    return (
-        <div className="container mt-5">
-            <BackHistoryButton />
-            <div className="row">
-                <div className="col-md-6 offset-md-3 shadow p-4">
-                    {
-                        //условие: в случае если нет загрузки и загружены профессии
-                        //то отображаем поля
-                        !isLoading && Object.keys(professions).length > 0 ? (
+    if (currentUser._id === userId) {
+        return (
+            <div className="container mt-5">
+                <BackHistoryButton />
+                <div className="row">
+                    <div className="col-md-6 offset-md-3 shadow p-4">
+                        {professions.length > 0 &&
+                        qualities.length > 0 &&
+                        currentUser ? (
                             <form onSubmit={handleSubmit}>
                                 <TextField
                                     label="Имя"
@@ -161,7 +140,7 @@ const EditUserPage = () => {
                                     label="Выберите свою профессию"
                                     defaultOption="Choose..."
                                     name="profession"
-                                    options={professions}
+                                    options={professionsList}
                                     value={data.profession}
                                     onChange={handleChange}
                                     error={errors.profession}
@@ -179,7 +158,7 @@ const EditUserPage = () => {
                                 />
                                 <MultiSelectField
                                     label="Выберите ваши качества"
-                                    options={qualities}
+                                    options={qualitiesList}
                                     onChange={handleChange}
                                     defaultValue={data.qualities}
                                     name="qualities"
@@ -194,12 +173,14 @@ const EditUserPage = () => {
                             </form>
                         ) : (
                             'loading...'
-                        )
-                    }
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
-    )
+        )
+    } else {
+        history.push('/login')
+    }
 }
 
 export default EditUserPage

@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import configFile from '../config.json'
-import { httpAuth } from '../hooks/useAuth'
 import localStorageService from './localStorage.service'
+import authService from './auth.service'
 
 const http = axios.create({
     baseURL: configFile.apiFirebasePoint
@@ -19,10 +19,7 @@ http.interceptors.request.use(
             const refreshToken = localStorageService.getRefreshToken()
             //проверка: истек ли токен? и существует ли он вообще?
             if (refreshToken && expiresDate < Date.now()) {
-                const { data } = await httpAuth.post('token', {
-                    grant_type: 'refresh_token',
-                    refresh_token: refreshToken
-                })
+                const data = await authService.refresh()
                 //трансформируем данные для того чтобы установить обновленные токены
                 localStorageService.setTokens({
                     refreshToken: data.refresh_token,

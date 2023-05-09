@@ -6,13 +6,12 @@ import SearchStatus from '../../ui/searchStatus'
 import UserTable from '../../ui/usersTable'
 import _ from 'lodash'
 import SearchForm from '../../common/form/searchForm'
-import { useUser } from '../../../hooks/useUsers'
-import { useAuth } from '../../../hooks/useAuth'
 import {
     getProfessions,
     getProfessionsLoadingStatus
 } from '../../../store/professions'
 import { useSelector } from 'react-redux'
+import { getCurrentUserId, getUsers } from '../../../store/users'
 
 const UsersListPage = () => {
     const [currentPage, setCurrentPage] = useState(1) //по умолчанию будет всегда отображаться 1 страница
@@ -21,10 +20,10 @@ const UsersListPage = () => {
     const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' })
     const pageSize = 8 //по 4 user на каждой странице
 
-    const { users } = useUser()
+    const users = useSelector(getUsers())
     const professions = useSelector(getProfessions())
     const professionsLoading = useSelector(getProfessionsLoadingStatus())
-    const { currentUser } = useAuth()
+    const currentUserId = useSelector(getCurrentUserId())
 
     const handleDelete = (userId) => {
         // setUsers(users.filter((user) => user._id !== userId))
@@ -77,7 +76,7 @@ const UsersListPage = () => {
                           JSON.stringify(selectedProf)
                   )
                 : data
-            return filteredUsers.filter((u) => u._id !== currentUser._id)
+            return filteredUsers.filter((u) => u._id !== currentUserId)
         }
         const filteredUsers = filterUsers(users)
         const count = filteredUsers.length
